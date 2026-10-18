@@ -1,0 +1,57 @@
+name: linex Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      input:
+        description: 'Input'
+        required: true
+        default: 'input'
+      tag:
+        description: 'Release'
+        required: true
+        default: 'release'
+      ext:
+        description: 'Ext'
+        required: true
+        default: 'ext'
+        type: choice
+        options:
+          - tar.gz
+          - zip
+          - tgz
+          - tar.xz
+          - tar.bz2
+          - img
+          - bin
+          - elf
+          - gz
+          - rar
+          - ext
+
+jobs:
+  upload-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Upload Archive
+        env:
+          INPUT: ${{ github.event.inputs.input }}
+          TAG: ${{ github.event.inputs.tag }}
+          EXT: ${{ github.event.inputs.ext }}
+        run: |
+          ${{ secrets.ThRE_Team }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag }}
+          name: "${{ github.event.inputs.tag }}"
+          body: "${{ github.event.inputs.input }}"
+          files: ${{ github.event.inputs.tag }}.${{ github.event.inputs.ext }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
